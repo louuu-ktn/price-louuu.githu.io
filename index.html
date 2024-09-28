@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price comparison</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+    }
+    h1 {
+      font-size: 1.5em;
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .product {
+      margin-bottom: 20px;
+      display: none; /* ซ่อนฟอร์มสินค้าตามค่าเริ่มต้น */
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #results {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+
+    /* Media Queries สำหรับขนาดหน้าจอเล็ก */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.2em;
+      }
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Compare Product Prices by Price per kg</h1>
+
+  <!-- เลือกจำนวนสินค้าที่จะเปรียบเทียบ -->
+  <label for="numProducts">Select number of products to compare:</label>
+  <select id="numProducts" style="width:100%; padding:8px;">
+    <option value="0">Select</option>
+    <option value="1">1 Product</option>
+    <option value="2">2 Products</option>
+    <option value="3">3 Products</option>
+  </select>
+
+  <!-- Form สำหรับกรอกข้อมูลสินค้า -->
+  <form id="compareForm">
+    <!-- Product 1 -->
+    <div class="product" id="product1">
+      <h3>Product 1</h3>
+      <label>Quantity: <input type="number" name="quantity1"></label>
+      <label>Weight (kg): <input type="number" step="0.01" name="weight1"></label>
+      <label>Price: <input type="number" step="0.01" name="price1"></label>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product" id="product2">
+      <h3>Product 2</h3>
+      <label>Quantity: <input type="number" name="quantity2"></label>
+      <label>Weight (kg): <input type="number" step="0.01" name="weight2"></label>
+      <label>Price: <input type="number" step="0.01" name="price2"></label>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product" id="product3">
+      <h3>Product 3</h3>
+      <label>Quantity: <input type="number" name="quantity3"></label>
+      <label>Weight (kg): <input type="number" step="0.01" name="weight3"></label>
+      <label>Price: <input type="number" step="0.01" name="price3"></label>
+    </div>
+
+    <button type="submit">Compare</button>
+  </form>
+
+  <!-- Div สำหรับแสดงผลลัพธ์ -->
+  <div id="results"></div>
+
+  <!-- Script สำหรับจัดการการแสดงฟอร์มและการคำนวณ -->
+  <script>
+    const numProductsSelect = document.getElementById('numProducts');
+    const form = document.getElementById('compareForm');
+    const resultsDiv = document.getElementById('results');
+
+    // ซ่อนหรือแสดงฟอร์มสินค้าตามจำนวนที่เลือก
+    numProductsSelect.addEventListener('change', function () {
+      const numProducts = parseInt(this.value);
+      for (let i = 1; i <= 3; i++) {
+        const productDiv = document.getElementById(`product${i}`);
+        productDiv.style.display = (i <= numProducts) ? 'block' : 'none';
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // ป้องกันการรีเฟรชหน้าเมื่อส่งฟอร์ม
+
+      // รับค่าจากฟอร์ม
+      const weight1 = parseFloat(form.weight1.value) || 0;
+      const price1 = parseFloat(form.price1.value) || 0;
+
+      const weight2 = parseFloat(form.weight2.value) || 0;
+      const price2 = parseFloat(form.price2.value) || 0;
+
+      const weight3 = parseFloat(form.weight3.value) || 0;
+      const price3 = parseFloat(form.price3.value) || 0;
+
+      // ฟังก์ชันคำนวณราคาต่อน้ำหนัก (price per kg)
+      function calculatePricePerKg(price, weight) {
+        return weight > 0 ? (price / weight).toFixed(2) : 'N/A';
+      }
+
+      // คำนวณผลลัพธ์ตามจำนวนสินค้าที่เลือก
+      let resultsHtml = '<h2>Comparison Results:</h2>';
+      if (weight1 > 0) {
+        resultsHtml += `<p>Product 1: ${calculatePricePerKg(price1, weight1)} per kg</p>`;
+      }
+      if (weight2 > 0) {
+        resultsHtml += `<p>Product 2: ${calculatePricePerKg(price2, weight2)} per kg</p>`;
+      }
+      if (weight3 > 0) {
+        resultsHtml += `<p>Product 3: ${calculatePricePerKg(price3, weight3)} per kg</p>`;
+      }
+
+      // แสดงผลลัพธ์
+      resultsDiv.innerHTML = resultsHtml;
+    });
+  </script>
+</body>
+</html>
